@@ -61,6 +61,7 @@ const HERMES_API_KEY = process.env.HERMES_API_KEY || "";
 const ADAPTER_PORT = parseInt(process.env.HERMES_ADAPTER_PORT || "18789", 10);
 const HERMES_MODEL = process.env.HERMES_MODEL || "hermes";
 const HERMES_AGENT_NAME = process.env.HERMES_AGENT_NAME || "Hermes";
+const HERMES_AGENT_ROLE = process.env.HERMES_AGENT_ROLE || "an AI orchestrator";
 const HOME = process.env.HOME || "/tmp";
 
 const AGENT_ID = "hermes";
@@ -73,7 +74,7 @@ const MAX_TOOL_ROUNDS = 8;
 // Orchestrator system prompt
 // ---------------------------------------------------------------------------
 
-const ORCHESTRATOR_SYSTEM_PROMPT = `You are ${HERMES_AGENT_NAME}, an AI orchestrator managing a team of sub-agents in a virtual 3D office.
+const ORCHESTRATOR_SYSTEM_PROMPT = process.env.HERMES_SYSTEM_PROMPT || `You are ${HERMES_AGENT_NAME}, ${HERMES_AGENT_ROLE} managing a team of sub-agents in a virtual 3D office.
 
 You have tools to build and manage your team autonomously:
 
