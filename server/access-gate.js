@@ -105,6 +105,27 @@ function createAccessGate(options) {
 
   const handleHttp = (req, res) => {
     if (!enabled) return false;
+
+    // Check query param ?token=... or ?access_token=... to auto-set cookie
+    try {
+      const urlObj = new URL(req.url || "/", "http://localhost");
+      const queryToken = urlObj.searchParams.get("token") || urlObj.searchParams.get("access_token");
+      if (queryToken && safeCompare(queryToken, token)) {
+        const ip = resolveClientIp(req);
+        rateLimiter.reset(ip);
+        // Clean URL without token parameter
+        urlObj.searchParams.delete("token");
+        urlObj.searchParams.delete("access_token");
+        const cleanPath = (urlObj.pathname || "/") + (urlObj.search ? urlObj.search : "");
+
+        res.statusCode = 302;
+        res.setHeader("Set-Cookie", `${cookieName}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`);
+        res.setHeader("Location", cleanPath);
+        res.end();
+        return true;
+      }
+    } catch {}
+
     const auth = getAuthState(req);
     if (!auth.authorized) {
       const statusCode = auth.limited ? 429 : 401;
