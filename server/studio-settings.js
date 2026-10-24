@@ -83,15 +83,20 @@ const readOpenclawGatewayDefaults = (env = process.env) => {
 };
 
 const loadUpstreamGatewaySettings = (env = process.env) => {
+  const envUrl = env.CLAW3D_GATEWAY_URL?.trim();
+  const envToken = env.CLAW3D_GATEWAY_TOKEN?.trim() || "";
+  const envAdapterType = env.CLAW3D_GATEWAY_ADAPTER_TYPE?.trim();
+
   const settingsPath = resolveStudioSettingsPath(env);
   const parsed = readJsonFile(settingsPath);
   const gateway = parsed && typeof parsed === "object" ? parsed.gateway : null;
-  const url = typeof gateway?.url === "string" ? gateway.url.trim() : "";
-  const token = typeof gateway?.token === "string" ? gateway.token.trim() : "";
+  const url = envUrl || (typeof gateway?.url === "string" ? gateway.url.trim() : "");
+  const token = envToken || (typeof gateway?.token === "string" ? gateway.token.trim() : "");
   const adapterType =
-    typeof gateway?.adapterType === "string" && gateway.adapterType.trim()
+    envAdapterType ||
+    (typeof gateway?.adapterType === "string" && gateway.adapterType.trim()
       ? gateway.adapterType.trim()
-      : "openclaw";
+      : "openclaw");
   if (!token && adapterType === "openclaw") {
     const defaults = readOpenclawGatewayDefaults(env);
     if (defaults) {
