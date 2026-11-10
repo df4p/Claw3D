@@ -1,9 +1,14 @@
+# So entra aqui o que o git ignora (ver .gitignore).
+# Excluir arquivo RASTREADO faria o git dentro do container ve-lo como apagado e
+# o build se declarar sujo, pintando um `*` falso no rotulo da versao.
+#
+# .git NAO entra nesta lista: e dele que o build tira o commit carimbado.
 node_modules
 .next
-.git
+.build-info.json
 .cursor
 .DS_Store
-npm-debug.log
+npm-debug.log*
 test-results
 coverage
 *.tsbuildinfo
